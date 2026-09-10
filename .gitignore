@@ -30,10 +30,28 @@ Thumbs.db
 *.tmp
 *.temp
 
-# Raw acquired source material
+# Raw acquired source material — kept local.
+# Provenance is recorded in docs/source_register/source_register.csv.
+# Only the README and directory placeholders are tracked so the folder
+# skeleton survives `git clone`.
+data/raw/*
+!data/raw/README.md
+!data/raw/web/
+!data/raw/pdf/
+!data/raw/csv/
+!data/raw/other/
+data/raw/web/*
+data/raw/pdf/*
+data/raw/csv/*
+data/raw/other/*
+!data/raw/web/.gitkeep
+!data/raw/pdf/.gitkeep
+!data/raw/csv/.gitkeep
+!data/raw/other/.gitkeep
 
-# Intermediate/generated data
-data/interim/
+# Intermediate / generated data — regenerable, kept local.
+data/interim/*
+!data/interim/README.md
 
 # Python tooling
 .pytest_cache/
