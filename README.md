@@ -62,3 +62,31 @@ To reproduce the exact environment used to develop this project:
 
 See docs/methodology/environment.md for the recorded interpreter,
 lock-file fingerprint, and verification evidence.
+
+## Team Workflow
+
+Repository uses a feature-branch workflow. Nothing is committed directly to main.
+
+- main -- stable, approved, always green
+- feature/cdf -- CDF projects, beneficiaries, bursaries, grants, loans
+- feature/finance -- budgets, revenue, LGEF, financial statements
+- feature/planning -- IDP, infrastructure, schools, health, water, roads
+- feature/governance -- minutes, WDC, consultations, newsletters, publications
+- feature/integration -- cross-domain schema alignment and final datasets
+
+### Member assignments
+
+- Member 1 (Leader / Data Architect) -> feature/integration
+- Member 2 (CDF / Project Data Lead) -> feature/cdf
+- Member 3 (Finance / Revenue Data Lead) -> feature/finance
+- Member 4 (Planning / Infrastructure Data Lead) -> feature/planning
+- Member 5 (Governance / Quality Lead) -> feature/governance
+
+### Workflow
+
+1. git fetch origin; git checkout feature/<yours>
+2. Work only on your branch. Never commit to main.
+3. Commit with a meaningful prefix: feat:, fix:, docs:, test:, chore:, data:
+4. git push origin feature/<yours>
+5. Open a Pull Request into main.
+6. The Group Leader reviews and merges.
