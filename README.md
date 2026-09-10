@@ -47,3 +47,18 @@ notebooks/
 docs/
 paper/
 tests/
+
+## Local environment setup
+
+To reproduce the exact environment used to develop this project:
+
+    python3 -m venv .venv
+    source .venv/bin/activate
+    python -m pip install --upgrade pip setuptools wheel
+    python -m pip install --only-binary=:all: -r requirements.lock.txt
+
+- requirements.txt       : human-readable dependency intent.
+- requirements.lock.txt  : exact, byte-reproducible versions.
+
+See docs/methodology/environment.md for the recorded interpreter,
+lock-file fingerprint, and verification evidence.
