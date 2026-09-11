@@ -43,3 +43,28 @@ Nothing else in the project disables TLS verification.
 - Any URL that is captured in our dataset or paper is stored as HTTP(S) literal,
   and the SSL warning is documented as a known issue.
 
+
+## DECISION: 2026-09-11 — Phase 1 (Source Discovery) closed with documented gaps
+
+**Context**
+148 same-domain URLs discovered via two-level reconnaissance of
+livingstonecouncil.gov.zm. 113 registered as candidate sources across
+cdf (37), finance (20), planning (8), governance (24), other (24).
+
+No standalone source was found for: revenue breakdown (market fees,
+local taxes, levies), LGEF specifically, water/sanitation/roads
+infrastructure, or WDC material.
+
+**Decision**
+Phase 1 is closed on the basis that these four areas are most likely
+embedded as line items within sources already registered (financial
+statements, budget documents, the IDP) rather than published as
+separate documents. This will be confirmed or refuted during Phase 3
+(Extraction) when each document is actually opened.
+
+**Rationale**
+Continued open-ended searching has a low probability of finding
+additional standalone sources and is not a good use of remaining time
+against the 12 September deadline. If Phase 3 confirms these are
+genuinely absent, this becomes a stated Limitation in the Data
+Description Paper rather than an invented data point.
