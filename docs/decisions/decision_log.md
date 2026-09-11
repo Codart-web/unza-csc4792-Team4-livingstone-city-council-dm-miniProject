@@ -68,3 +68,26 @@ additional standalone sources and is not a good use of remaining time
 against the 12 September deadline. If Phase 3 confirms these are
 genuinely absent, this becomes a stated Limitation in the Data
 Description Paper rather than an invented data point.
+
+## DECISION: 2026-09-11 — Reclassified 3 news posts as CDF project records
+
+**Context**
+9 unlabeled WordPress news posts were assigned to LEADER for manual
+review (no domain could be inferred from URL/anchor text alone).
+Content was fetched and read directly.
+
+**Decision**
+3 of 9 posts contained genuine structured CDF project data (ward,
+cost, funding year, completion percentage, and in one case a named
+contractor) and were reassigned from domain=other/LEADER to
+domain=cdf/Member 2, given new source IDs (SRC-CDF-038 to 040).
+3 posts were kept as contextual/background sources only (planning
+narrative, no structured data). 3 posts were rejected as unrelated
+to any project data domain (disaster relief, voter education,
+unrelated public event).
+
+**Rationale**
+This directly implements the project plan's Section 3E expectation
+that council news reports can enrich CDF/project records where they
+contain structured facts. Reclassification was based on actual
+content review, not assumption.
