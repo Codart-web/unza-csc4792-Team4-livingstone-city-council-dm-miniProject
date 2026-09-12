@@ -91,3 +91,28 @@ This directly implements the project plan's Section 3E expectation
 that council news reports can enrich CDF/project records where they
 contain structured facts. Reclassification was based on actual
 content review, not assumption.
+
+## DECISION: 2026-09-12 — Leader performed Member 4's Phase 1b verification/acquisition
+
+**Context**
+Member 4 (Planning/Infrastructure) had prior commitments preventing
+personal completion of Phase 1b source verification/acquisition
+before the compressed deadline. The Leader performed this work
+directly on Member 4's branch (feature/planning) to avoid blocking
+downstream phases.
+
+**What was done**
+All 8 registered planning sources were verified: 2 category-index
+pages returned real HTTP 404s (consistent with the same failure
+pattern already observed across CDF/Finance/Governance category
+pages - a site-wide issue), the ZDSP page loads but is an external
+links directory with no new sources, and 5 PDFs were confirmed real
+and downloaded to data/raw/pdf/, including the 32MB Integrated
+Development Plan 2021-2031.
+
+**Rationale**
+This is consistent with the same Leader-override pattern already
+used for the Leader's own source family and, separately, for
+downloading Member 5's governance sources via WSL due to a network
+constraint. Recorded here for transparency in the project
+methodology and for accurate individual-contribution accounting.
