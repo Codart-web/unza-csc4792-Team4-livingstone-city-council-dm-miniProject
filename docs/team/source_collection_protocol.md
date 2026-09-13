@@ -38,3 +38,19 @@ If two official sources disagree:
 - record both sources;
 - investigate the discrepancy;
 - document the resolution in the decision log.
+
+## PR Merge Gate — Acquisition Audit (added 2026-09-12)
+
+Before merging any PR that changes a source_register CSV's status to
+"acquired", the reviewer MUST run:
+
+    python3 src/acquisition/audit_acquired_sources.py <path-to-their-csv> --all
+
+All rows must PASS. If any FAIL, do not merge - return the PR to the
+submitter with the specific failing source_id(s) and ask them to
+re-verify or correct the status.
+
+Rationale: data/raw/ is gitignored by design, so a PR's diff never
+shows the actual acquired file - only the CSV status change. This
+audit closes that gap by independently re-checking the live source,
+rather than trusting the status column on faith.
