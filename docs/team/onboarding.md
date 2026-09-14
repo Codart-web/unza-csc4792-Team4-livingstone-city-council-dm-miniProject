@@ -20,7 +20,7 @@ You must have:
 
 - A computer with WSL (Windows) or macOS/Linux
 - Git installed
-- Python 3.10 or newer
+- Python 3.11 or newer (numpy 2.3+ dropped 3.10 support; see decision log)
 - An SSH key registered with GitHub
 - Been added as a collaborator on the repo (the Leader confirms this)
 

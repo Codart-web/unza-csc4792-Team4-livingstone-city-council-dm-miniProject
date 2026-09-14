@@ -154,3 +154,35 @@ untested assumption based on similar-looking sources, not a checked
 fact. This is worth stating as a limitation of early-stage manual
 triage: document-type pattern-matching is not a substitute for
 actually opening every source.
+
+## DECISION: 2026-09-14 — Raised minimum Python version to 3.11; pinned numpy ceiling
+
+**Context**
+requirements.lock.txt pinned numpy==2.5.3, which requires Python
+>=3.12. This was generated on the Leader's machine (Python 3.14) with
+an unbounded constraint in requirements.txt (numpy>=1.26). Member 4,
+on Python 3.11, could not install it at all - pip aborts the entire
+batch install when one pinned version can't be resolved, silently
+preventing 8 unrelated packages listed after numpy from installing
+too. This caused repeated, confusing "8 failed" test results across
+multiple sessions before the root cause was isolated.
+
+Checked PyPI directly: no numpy version supports both Python 3.10
+(the previously documented minimum) and Python 3.14 (Leader's actual
+version) simultaneously - numpy dropped 3.10 support at 2.3.0, and
+no version below 2.3 has Python 3.14 wheels.
+
+**Decision**
+- requirements.txt: numpy constraint changed to numpy>=1.26,<2.5
+  (keeps the lock file from drifting to a 3.12+-only release again)
+- requirements.lock.txt: regenerated, numpy pinned to 2.4.6 (supports
+  3.11 through 3.14)
+- docs/team/onboarding.md: minimum Python version raised from 3.10 to
+  3.11 to match what the dependency set can actually support
+
+**Rationale**
+Honesty over aspiration: keeping "3.10 or newer" documented while the
+actual lock file silently required 3.12+ was a false promise. No team
+member was confirmed to be actually running exactly 3.10, so raising
+the floor to 3.11 costs nothing real while fixing a genuine, verified
+incompatibility.
