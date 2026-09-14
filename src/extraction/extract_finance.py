@@ -101,6 +101,12 @@ DEBT_ARREARS_FIELDS = [
     "source_url",
 ]
 
+REPORT_FIELDS = ["source_id", "source_title", "source_type", "status", "extraction_result", "notes"]
+
+# Verified by direct text inspection (see docs/team/findings_finance.md) to be
+# national legislation/policy documents with no Livingstone-specific figures.
+CONTEXT_ONLY_SOURCE_IDS = ("SRC-FINA-001", "SRC-FINA-002", "SRC-FINA-012")
+
 
 def read_register() -> dict[str, dict[str, str]]:
     with REGISTER.open(encoding="utf-8", newline="") as handle:
@@ -385,6 +391,142 @@ def extract_debt_arrears_rows(source: dict[str, str]) -> list[dict[str, str]]:
     return rows
 
 
+def probe_pdf_text(source_id: str) -> tuple[int, int]:
+    """Return (page_count, extractable_char_count) for a source's local PDF."""
+    pdf_path = find_pdf_for_source(source_id)
+    with pdfplumber.open(pdf_path) as pdf:
+        pages = pdf.pages
+        chars = sum(len(page.extract_text() or "") for page in pages)
+        return len(pages), chars
+
+
+def build_extraction_report(
+    register: dict[str, dict[str, str]],
+    budget_rows: list[dict[str, str]],
+    performance_rows: list[dict[str, str]],
+    capital_rows: list[dict[str, str]],
+    debt_rows: list[dict[str, str]],
+) -> list[dict[str, str]]:
+    """Per-source extraction outcome for every registered finance source.
+
+    Status is derived from what the extraction functions actually produced
+    (for the 4 machine-readable sources) or from probing the PDF's own text
+    layer at run time (for everything else) - not from a hand-written note -
+    so this file stays true if the script is re-run against different inputs.
+    """
+    budget_counts = {
+        source_id: sum(1 for row in budget_rows if row["source_id"] == source_id)
+        for source_id in BUDGET_SOURCE_IDS
+    }
+    report: list[dict[str, str]] = []
+
+    for source_id in sorted(register):
+        source = register[source_id]
+        status = source["status"]
+
+        if source_id in budget_counts:
+            report.append(
+                {
+                    "source_id": source_id,
+                    "source_title": source["source_title"],
+                    "source_type": source["source_type"],
+                    "status": status,
+                    "extraction_result": "records extracted",
+                    "notes": (
+                        f"{budget_counts[source_id]} revenue line-item rows written to "
+                        "finance_budget_raw.csv, with source provenance."
+                    ),
+                }
+            )
+            continue
+
+        if source_id == PERFORMANCE_SOURCE_ID:
+            report.append(
+                {
+                    "source_id": source_id,
+                    "source_title": source["source_title"],
+                    "source_type": source["source_type"],
+                    "status": status,
+                    "extraction_result": "records extracted",
+                    "notes": (
+                        f"{len(performance_rows)} revenue/payment line items, "
+                        f"{len(capital_rows)} capital projects, and {len(debt_rows)} "
+                        "debt/arrears rows written across finance_performance_raw.csv, "
+                        "finance_capital_projects_raw.csv, and "
+                        "finance_debt_arrears_raw.csv, with source provenance."
+                    ),
+                }
+            )
+            continue
+
+        if status == "rejected":
+            report.append(
+                {
+                    "source_id": source_id,
+                    "source_title": source["source_title"],
+                    "source_type": source["source_type"],
+                    "status": status,
+                    "extraction_result": "not applicable",
+                    "notes": source["notes"],
+                }
+            )
+            continue
+
+        if source_id in CONTEXT_ONLY_SOURCE_IDS:
+            report.append(
+                {
+                    "source_id": source_id,
+                    "source_title": source["source_title"],
+                    "source_type": source["source_type"],
+                    "status": status,
+                    "extraction_result": "not extracted",
+                    "notes": (
+                        "Verified by direct text inspection to be a national "
+                        "legislation/policy document with no Livingstone-specific "
+                        "figures; context only."
+                    ),
+                }
+            )
+            continue
+
+        try:
+            page_count, char_count = probe_pdf_text(source_id)
+        except FileNotFoundError:
+            notes = "Local PDF not found; cannot probe for extractable text."
+        else:
+            if page_count == 0:
+                notes = (
+                    "Malformed/non-standard PDF: pdfplumber reports 0 pages (e.g. a "
+                    "single embedded image object with no page tree). Cannot be "
+                    "paginated for OCR without repair."
+                )
+            elif char_count == 0:
+                notes = (
+                    f"Scanned document ({page_count} pages), zero extractable "
+                    "characters via pdfplumber on every page. Needs OCR or manual "
+                    "transcription."
+                )
+            else:
+                notes = (
+                    f"{page_count} pages, {char_count} extractable characters found "
+                    "but not yet matched to a known table layout; needs manual "
+                    "review before extraction."
+                )
+
+        report.append(
+            {
+                "source_id": source_id,
+                "source_title": source["source_title"],
+                "source_type": source["source_type"],
+                "status": status,
+                "extraction_result": "not extracted",
+                "notes": notes,
+            }
+        )
+
+    return report
+
+
 def write_csv(path: Path, fields: list[str], rows: list[dict[str, str]]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8", newline="") as handle:
@@ -414,10 +556,16 @@ def main() -> int:
     )
     write_csv(INTERIM_DIR / "finance_debt_arrears_raw.csv", DEBT_ARREARS_FIELDS, debt_rows)
 
+    report_rows = build_extraction_report(
+        register, budget_rows, performance_rows, capital_rows, debt_rows
+    )
+    write_csv(INTERIM_DIR / "finance_extraction_report.csv", REPORT_FIELDS, report_rows)
+
     print(f"finance_budget_raw.csv: {len(budget_rows)} rows")
     print(f"finance_performance_raw.csv: {len(performance_rows)} rows")
     print(f"finance_capital_projects_raw.csv: {len(capital_rows)} rows")
     print(f"finance_debt_arrears_raw.csv: {len(debt_rows)} rows")
+    print(f"finance_extraction_report.csv: {len(report_rows)} sources covered")
     return 0
 
 
