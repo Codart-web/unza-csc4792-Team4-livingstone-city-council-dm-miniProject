@@ -117,7 +117,6 @@ downloading Member 5's governance sources via WSL due to a network
 constraint. Recorded here for transparency in the project
 methodology and for accurate individual-contribution accounting.
 
-<<<<<<< HEAD
 ## DECISION: 2026-09-14 — Kept an apparent source typo in the 2026 budget as-is
 
 **Context**
@@ -146,7 +145,7 @@ This is flagged here and in
 `data/interim/finance_extraction_report.csv` so it can be excluded
 or footnoted during cleaning/validation (Phase 4/6) rather than
 quietly propagating into the final dataset.
-=======
+
 ## DECISION: 2026-09-14 — Service Charter yields its own standalone dataset
 
 **Context**
@@ -184,4 +183,3 @@ untested assumption based on similar-looking sources, not a checked
 fact. This is worth stating as a limitation of early-stage manual
 triage: document-type pattern-matching is not a substitute for
 actually opening every source.
->>>>>>> d03ce856e847d61afc8a63f8f813352d7fbabe94
