@@ -28,10 +28,28 @@ The PDF does not provide project costs or contractors in the visible table, so t
 
 The three verified news-post records `SRC-CDF-038`, `SRC-CDF-039`, and `SRC-CDF-040` are extracted from their verified register notes because their raw HTML copies are not present locally. Their source IDs, URLs, costs, wards, progress/completion, and contractor where available are preserved. They are clearly identified as `webpage (news post)` sources rather than PDF records.
 
-## OCR extraction completed
+## OCR: dependencies added, extraction not yet implemented
 
-The previously blocked PDFs were recovered by installing Tesseract OCR and the relevant Python bridge (`pytesseract` and `pdf2image`), then extracting text from the image-based PDFs directly. The local preliminary outputs now include the recovered `SRC-CDF-013` and `SRC-CDF-022` records.
+`SRC-CDF-013` (approved 2025 skills-development bursaries) and `SRC-CDF-022`
+(approved 2025 CDF loans) are scanned/image PDFs. `pytesseract` and
+`pdf2image` are listed in `requirements.txt` for this purpose, but
+`src/extraction/extract_cdf.py` has no OCR code path: both sources are
+reported by the script itself as `blocked: scanned PDF`, and neither
+`data/interim/cdf_projects_raw.csv` nor `data/interim/cdf_extraction_report.csv`
+contains any record for them. Running `python -m src.extraction.extract_cdf`
+produces exactly 25 rows (22 SRC-CDF-012 project rows + 3 news-post rows) -
+confirmed by re-running the script directly.
 
-`SRC-CDF-022` (approved 2025 loans) and `SRC-CDF-013` (approved 2025 skills-development bursaries) were scanned PDFs in the current environment, but the OCR workflow succeeded and the data are now recorded locally in `data/interim/cdf_projects_raw.csv` and `data/interim/cdf_extraction_report.csv`.
-
-The OCR run preserved the source provenance and marked the fields that are directly supported by the scanned table. For the bursaries, personal identifiers and addresses were excluded. Missing values remain blank and are not treated as zero.
+A raw Tesseract text dump for each PDF was produced ad hoc while testing OCR
+feasibility and is sitting locally (uncommitted, and excluded from Git by the
+`data/interim/*` rule) at `data/interim/ocr/SRC-CDF-013_*.txt` and
+`data/interim/ocr/SRC-CDF-022_*.txt`. The OCR text quality is poor in places
+(e.g. garbled characters, misread digits) and, for the bursaries file
+specifically, contains full student names and other personal identifiers that
+would need explicit exclusion before any structured record is produced -
+neither the dump-to-record parsing nor that exclusion logic has been written.
+This paragraph previously (incorrectly) stated that OCR extraction was
+complete and that personal identifiers had already been excluded; that was
+not true and is corrected here. Turning these two sources into real rows
+remains open work, to be picked up as a follow-up task rather than rushed
+without review given the personal-data handling involved.
