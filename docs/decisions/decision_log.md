@@ -117,6 +117,7 @@ downloading Member 5's governance sources via WSL due to a network
 constraint. Recorded here for transparency in the project
 methodology and for accurate individual-contribution accounting.
 
+<<<<<<< HEAD
 ## DECISION: 2026-09-14 — Kept an apparent source typo in the 2026 budget as-is
 
 **Context**
@@ -145,3 +146,42 @@ This is flagged here and in
 `data/interim/finance_extraction_report.csv` so it can be excluded
 or footnoted during cleaning/validation (Phase 4/6) rather than
 quietly propagating into the final dataset.
+=======
+## DECISION: 2026-09-14 — Service Charter yields its own standalone dataset
+
+**Context**
+The Service Charter (SRC-GOVE-009, a legacy .doc file) was earlier
+assessed in docs/team/findings_governance.md as likely reference-only,
+based on the pattern seen in other Governance sources (Acts,
+newsletters). That assessment was never verified against this
+specific file's actual content.
+
+On manual inspection, the file contains 6 structured Word tables
+covering 99 distinct council services (permits, licences,
+certificates), each broken into client type, procedural steps, per-
+step time standards, total service duration, and application
+requirements - a genuine, rich, tabular dataset of 372 step-level
+records.
+
+**Decision**
+This will be produced as its OWN standalone final dataset,
+independent of CDF/Finance/Planning/Governance's other material:
+db-unza26-csc4792-council-service-standards.csv
+
+It will NOT be merged or folded into any other domain's dataset at
+Integration (Phase 6).
+
+**Rationale**
+The content is self-contained (does not reference or depend on other
+domains' data), structurally distinct (service/step/standard schema,
+not project/cost/ward like CDF), and substantial enough (372 rows,
+99 services) to stand alone rather than being treated as a minor
+enrichment.
+
+**Lesson for methodology section of the paper**
+The earlier "thin/reference-only" assessment for this file was an
+untested assumption based on similar-looking sources, not a checked
+fact. This is worth stating as a limitation of early-stage manual
+triage: document-type pattern-matching is not a substitute for
+actually opening every source.
+>>>>>>> d03ce856e847d61afc8a63f8f813352d7fbabe94
