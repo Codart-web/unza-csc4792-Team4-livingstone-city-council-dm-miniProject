@@ -116,3 +116,127 @@ used for the Leader's own source family and, separately, for
 downloading Member 5's governance sources via WSL due to a network
 constraint. Recorded here for transparency in the project
 methodology and for accurate individual-contribution accounting.
+
+## DECISION: 2026-09-14 — Kept an apparent source typo in the 2026 budget as-is
+
+**Context**
+While extracting the 2026 Annual Budget revenue table (SRC-FINA-016)
+into `finance_budget_raw.csv`, the "Commercial" local-tax line under
+category "01 Local taxes/rates" reads (as printed in the PDF):
+approved budget 2026 = 21,567,902; revised budget 2027 = 221,567,902;
+budget estimate 2028 = 21,567,902. The revised-2027 figure has an
+extra leading "2" compared to both neighbouring years and does not
+sum correctly into the category's own "SubItem Total" row for that
+column (51,761,556 approved vs. 251,761,556 revised vs. 51,761,556
+estimate - the revised subtotal is likewise inflated by the same
+extra digit, so the source document is internally consistent with
+its own typo, not just a one-off OCR/rendering artifact on our side).
+
+**Decision**
+The value is extracted and stored exactly as printed
+(`revised_budget=251761556`, `revised_budget_year=2027`). No
+correction is applied.
+
+**Rationale**
+Rule 2 (never invent data) and Rule 3 (keep raw evidence) both apply:
+we do not know whether 21,567,902 or 221,567,902 is the council's
+intended figure, and guessing would silently fabricate a number.
+This is flagged here and in
+`data/interim/finance_extraction_report.csv` so it can be excluded
+or footnoted during cleaning/validation (Phase 4/6) rather than
+quietly propagating into the final dataset.
+
+## DECISION: 2026-09-14 — Service Charter yields its own standalone dataset
+
+**Context**
+The Service Charter (SRC-GOVE-009, a legacy .doc file) was earlier
+assessed in docs/team/findings_governance.md as likely reference-only,
+based on the pattern seen in other Governance sources (Acts,
+newsletters). That assessment was never verified against this
+specific file's actual content.
+
+On manual inspection, the file contains 6 structured Word tables
+covering 99 distinct council services (permits, licences,
+certificates), each broken into client type, procedural steps, per-
+step time standards, total service duration, and application
+requirements - a genuine, rich, tabular dataset of 372 step-level
+records.
+
+**Decision**
+This will be produced as its OWN standalone final dataset,
+independent of CDF/Finance/Planning/Governance's other material:
+db-unza26-csc4792-council-service-standards.csv
+
+It will NOT be merged or folded into any other domain's dataset at
+Integration (Phase 6).
+
+**Rationale**
+The content is self-contained (does not reference or depend on other
+domains' data), structurally distinct (service/step/standard schema,
+not project/cost/ward like CDF), and substantial enough (372 rows,
+99 services) to stand alone rather than being treated as a minor
+enrichment.
+
+**Lesson for methodology section of the paper**
+The earlier "thin/reference-only" assessment for this file was an
+untested assumption based on similar-looking sources, not a checked
+fact. This is worth stating as a limitation of early-stage manual
+triage: document-type pattern-matching is not a substitute for
+actually opening every source.
+
+## DECISION: 2026-09-14 — Raised minimum Python version to 3.11; pinned numpy ceiling
+
+**Context**
+requirements.lock.txt pinned numpy==2.5.3, which requires Python
+>=3.12. This was generated on the Leader's machine (Python 3.14) with
+an unbounded constraint in requirements.txt (numpy>=1.26). Member 4,
+on Python 3.11, could not install it at all - pip aborts the entire
+batch install when one pinned version can't be resolved, silently
+preventing 8 unrelated packages listed after numpy from installing
+too. This caused repeated, confusing "8 failed" test results across
+multiple sessions before the root cause was isolated.
+
+Checked PyPI directly: no numpy version supports both Python 3.10
+(the previously documented minimum) and Python 3.14 (Leader's actual
+version) simultaneously - numpy dropped 3.10 support at 2.3.0, and
+no version below 2.3 has Python 3.14 wheels.
+
+**Decision**
+- requirements.txt: numpy constraint changed to numpy>=1.26,<2.5
+  (keeps the lock file from drifting to a 3.12+-only release again)
+- requirements.lock.txt: regenerated, numpy pinned to 2.4.6 (supports
+  3.11 through 3.14)
+- docs/team/onboarding.md: minimum Python version raised from 3.10 to
+  3.11 to match what the dependency set can actually support
+
+**Rationale**
+Honesty over aspiration: keeping "3.10 or newer" documented while the
+actual lock file silently required 3.12+ was a false promise. No team
+member was confirmed to be actually running exactly 3.10, so raising
+the floor to 3.11 costs nothing real while fixing a genuine, verified
+incompatibility.
+
+## DECISION: 2026-09-14 — Climate Strategy pillars are narrative, not tabular
+
+**Context**
+SRC-PLAN-005 pages 7-9 contain the strategy's 5 strategic pillars,
+each with a "Strategic Focus" and a bulleted "Priority Interventions"
+list. pdfplumber detects these as tables, but the underlying PDF uses
+a two-column magazine-style layout - both table extraction and plain
+text extraction interleave the two side-by-side columns, mixing one
+pillar's content with its neighbour's mid-sentence.
+
+**Decision**
+This content will NOT be mechanically parsed into a CSV. It will be
+cited as narrative content in the paper's background/context section
+(the 5 pillar names and their strategic focus, read directly from the
+source).
+
+**Rationale**
+A parser attempting to un-interleave two-column text carries a real,
+material risk of misattributing one pillar's intervention to another
+- silent fabrication of structure the source doesn't cleanly present.
+Given the deadline, this risk is not worth taking for content that is
+legitimately narrative in nature, not row-level project data like
+CDF/Finance. This is a considered decision after direct inspection of
+the real content, not a skipped step.
