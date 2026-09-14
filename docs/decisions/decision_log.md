@@ -116,3 +116,32 @@ used for the Leader's own source family and, separately, for
 downloading Member 5's governance sources via WSL due to a network
 constraint. Recorded here for transparency in the project
 methodology and for accurate individual-contribution accounting.
+
+## DECISION: 2026-09-14 — Kept an apparent source typo in the 2026 budget as-is
+
+**Context**
+While extracting the 2026 Annual Budget revenue table (SRC-FINA-016)
+into `finance_budget_raw.csv`, the "Commercial" local-tax line under
+category "01 Local taxes/rates" reads (as printed in the PDF):
+approved budget 2026 = 21,567,902; revised budget 2027 = 221,567,902;
+budget estimate 2028 = 21,567,902. The revised-2027 figure has an
+extra leading "2" compared to both neighbouring years and does not
+sum correctly into the category's own "SubItem Total" row for that
+column (51,761,556 approved vs. 251,761,556 revised vs. 51,761,556
+estimate - the revised subtotal is likewise inflated by the same
+extra digit, so the source document is internally consistent with
+its own typo, not just a one-off OCR/rendering artifact on our side).
+
+**Decision**
+The value is extracted and stored exactly as printed
+(`revised_budget=251761556`, `revised_budget_year=2027`). No
+correction is applied.
+
+**Rationale**
+Rule 2 (never invent data) and Rule 3 (keep raw evidence) both apply:
+we do not know whether 21,567,902 or 221,567,902 is the council's
+intended figure, and guessing would silently fabricate a number.
+This is flagged here and in
+`data/interim/finance_extraction_report.csv` so it can be excluded
+or footnoted during cleaning/validation (Phase 4/6) rather than
+quietly propagating into the final dataset.
