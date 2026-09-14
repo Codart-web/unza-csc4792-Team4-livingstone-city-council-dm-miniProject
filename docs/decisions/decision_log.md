@@ -215,3 +215,28 @@ actual lock file silently required 3.12+ was a false promise. No team
 member was confirmed to be actually running exactly 3.10, so raising
 the floor to 3.11 costs nothing real while fixing a genuine, verified
 incompatibility.
+
+## DECISION: 2026-09-14 — Climate Strategy pillars are narrative, not tabular
+
+**Context**
+SRC-PLAN-005 pages 7-9 contain the strategy's 5 strategic pillars,
+each with a "Strategic Focus" and a bulleted "Priority Interventions"
+list. pdfplumber detects these as tables, but the underlying PDF uses
+a two-column magazine-style layout - both table extraction and plain
+text extraction interleave the two side-by-side columns, mixing one
+pillar's content with its neighbour's mid-sentence.
+
+**Decision**
+This content will NOT be mechanically parsed into a CSV. It will be
+cited as narrative content in the paper's background/context section
+(the 5 pillar names and their strategic focus, read directly from the
+source).
+
+**Rationale**
+A parser attempting to un-interleave two-column text carries a real,
+material risk of misattributing one pillar's intervention to another
+- silent fabrication of structure the source doesn't cleanly present.
+Given the deadline, this risk is not worth taking for content that is
+legitimately narrative in nature, not row-level project data like
+CDF/Finance. This is a considered decision after direct inspection of
+the real content, not a skipped step.
