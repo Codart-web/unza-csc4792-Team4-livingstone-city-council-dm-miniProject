@@ -67,3 +67,4 @@ htmlcov/
 # Generated binary artifacts
 *.pkl
 *.pickle
+docs/source_register/*.bak-*.csv
