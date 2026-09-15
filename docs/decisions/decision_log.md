@@ -266,3 +266,68 @@ standard (source_register.csv, audit_acquired_sources.py, this
 decision log). Some facts in the excluded file may be genuinely true
 and valuable, but were not verified through our process in the
 available time, so are not included rather than risk an unverifiable claim.
+## DECISION: 2026-09-14 — Standardised "Road Works"/"Roads works" to "Road works"
+
+**Context**
+Phase 5 preprocessing of the CDF projects dataset flagged that `project_type`
+has three spellings for what reads as the same activity: "Road works" (8
+rows), "Road Works" (1 row, SRC-CDF-012 project 3, Dr. Mubitana ward), and
+"Roads works" (1 row, SRC-CDF-012 project 13, Mwalibonena ward). All three
+are present in the source PDF itself, not introduced by extraction.
+
+**Decision**
+Read both affected rows' `project_description` values directly: project 3 is
+"Road grading and gravelling of 5.5km of various roads" and project 13 is
+"Road Grading and Gravelling of l.2km of roads in MA Zone" - both plainly the
+same activity as the 8 rows already labelled "Road works". Both variants are
+merged into the majority spelling "Road works" by
+`src/preprocessing/preprocess_cdf.py`.
+
+**Rationale**
+This is a documented, source-verified merge of a spelling/capitalisation
+inconsistency in the original document, not an inference about unknown data
+- the underlying activity was independently confirmed from each row's own
+description before merging, satisfying the "no unsupported assumptions"
+rule.
+
+## DECISION: 2026-09-14 — Left "Maramba" vs "Maramba (R Section)" ward names unmerged
+
+**Context**
+The CDF projects dataset has `ward="Maramba"` (SRC-CDF-012, from the 2024
+approved-projects PDF) and `ward="Maramba (R Section)"` (SRC-CDF-038, a 2025
+news-derived record). These may be the same ward with an added sub-area
+qualifier, or genuinely different areas - this cannot be determined from the
+two sources alone.
+
+**Decision**
+Both values are left exactly as extracted. No merge, no truncation of
+"(R Section)". Flagged in `docs/team/findings_cdf_extraction.md` for Phase 6
+Integration to resolve (e.g. against an authoritative ward list, if one
+becomes available).
+
+**Rationale**
+Unlike the "Road works" case above, there is no independent evidence in
+either source confirming these refer to the identical area - merging them
+would be a guess, not a verified correction. Per the Phase 6 Integration
+Rule: investigate, do not arbitrarily choose, and document unresolved
+discrepancies rather than silently picking one.
+
+## DECISION: 2026-09-14 — Removed Finance final CSVs mistakenly committed to feature/cdf
+
+**Context**
+Commit `dd010e9` ("Done with Phase 4 - Data Cleaning"), authored as
+`MissTeeChipo <teechipo@gmail.com>`, added the four Finance final datasets
+to this branch. `data/interim/` and `data/final/` are local filesystem
+state, not branch-scoped, so leftover Finance output from earlier work in
+the same working directory was picked up and committed here under the
+Finance identity while `feature/cdf` was checked out.
+
+**Decision**
+The four Finance CSVs are removed from `feature/cdf` in the following
+commit. They remain correctly committed on `feature/finance`.
+
+**Rationale**
+Keeping Member 3's output correctly attributed to Member 3's branch/account
+matters for this assignment's per-member accountability, and the CDF branch
+should only contain CDF-domain deliverables. No data was lost - the
+authoritative copy exists on the correct branch.
