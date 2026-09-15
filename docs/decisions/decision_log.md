@@ -240,3 +240,29 @@ Given the deadline, this risk is not worth taking for content that is
 legitimately narrative in nature, not row-level project data like
 CDF/Finance. This is a considered decision after direct inspection of
 the real content, not a skipped step.
+
+## DECISION: 2026-09-15 — Excluded independently-scraped dataset from final submission
+
+**Context**
+A separate CDF dataset (10 rows) was independently committed to main
+past the deadline, citing bare-domain sources (Facebook page, news
+site homepage, council homepage) rather than specific verifiable
+page-level URLs, and carrying a scraped_date (2026-09-07) that
+predates this project's actual start (2026-09-10) - unexplained.
+
+**Decision**
+This file is retained in git history (livingstone_city_council_dataset_team_completed_dataset/)
+as evidence of effort, but is NOT used as the final CDF dataset for
+Kaggle/paper submission. The canonical CDF dataset is
+data/final/cdf_projects_clean.csv + data/final/cdf_news_derived.csv,
+built through the project's established source-register, acquisition-
+audit, and extraction pipeline, where every record traces to a
+specific source_id and verifiable URL.
+
+**Rationale**
+Using unverifiable, non-traceable sources for the final submission
+would directly contradict this project's own documented provenance
+standard (source_register.csv, audit_acquired_sources.py, this
+decision log). Some facts in the excluded file may be genuinely true
+and valuable, but were not verified through our process in the
+available time, so are not included rather than risk an unverifiable claim.
