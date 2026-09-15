@@ -16,12 +16,24 @@ Official website: https://www.livingstonecouncil.gov.zm
 
 To identify, acquire, extract, clean, curate, preprocess and validate relevant data from the public digital footprint of Livingstone City Council.
 
+## Final Dataset (Kaggle)
+
+https://www.kaggle.com/datasets/sachynachy/livingstone-city-council-data
+
+6 CSV files, 738 total records, every record traceable to a specific
+source document and URL (see docs/source_register/source_register.csv).
+
 ## Data Domains
 
-1. CDF projects
-2. Revenue and budgets
-3. Financial/LGEF information
-4. Development and infrastructure
+1. CDF projects (34 records)
+2. Municipal finance: budget, performance, capital projects, debt/arrears (332 records)
+3. Council Service Standards: 99 services, procedural steps and time standards (372 records)
+
+Development/infrastructure and detailed governance data were assessed
+but not included as row-level datasets in the final submission — see
+docs/decisions/decision_log.md for the specific reasoning per source
+(e.g. narrative content that risked misattribution if force-parsed,
+scanned PDFs requiring OCR not implemented in the available time).
 
 (Scope confirmed after source verification — see docs/decisions/decision_log.md)
 
