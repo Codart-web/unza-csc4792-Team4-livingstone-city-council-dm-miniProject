@@ -1,0 +1,7 @@
+source_id|source_title|source_type|status|extraction_result|notes
+SRC-CDF-012|APPROVED 2024 CDF COMMUNITY PROJECTS|PDF|acquired|records extracted|Project rows written with source provenance.
+SRC-CDF-038|Backbone Sewer Installation, Maramba Ward (news report)|webpage (news post)|acquired|records extracted|Project rows written with source provenance.
+SRC-CDF-039|Road Works, Linda Township / Nansanzu Ward (news report)|webpage (news post)|acquired|records extracted|Project rows written with source provenance.
+SRC-CDF-040|Kasiya Ward CDF Water Boost - 8 Boreholes (news report)|webpage (news post)|acquired|records extracted|Project rows written with source provenance.
+SRC-CDF-013|APPROVED SKILLS DEVELOPMENT BURSARIES 2025|PDF|acquired|blocked: scanned PDF|No OCR dependency is installed; do not hand-type records. Extract after OCR/manual workflow is approved.
+SRC-CDF-022|APPROVED CDF 2025 LOANS LIVINGSTONE CONSTITUENCY|PDF|acquired|blocked: scanned PDF|No OCR dependency is installed; do not hand-type records. Extract after OCR/manual workflow is approved.

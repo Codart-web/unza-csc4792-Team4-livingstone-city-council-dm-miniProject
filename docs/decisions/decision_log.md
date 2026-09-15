@@ -215,3 +215,172 @@ actual lock file silently required 3.12+ was a false promise. No team
 member was confirmed to be actually running exactly 3.10, so raising
 the floor to 3.11 costs nothing real while fixing a genuine, verified
 incompatibility.
+
+## DECISION: 2026-09-14 — Climate Strategy pillars are narrative, not tabular
+
+**Context**
+SRC-PLAN-005 pages 7-9 contain the strategy's 5 strategic pillars,
+each with a "Strategic Focus" and a bulleted "Priority Interventions"
+list. pdfplumber detects these as tables, but the underlying PDF uses
+a two-column magazine-style layout - both table extraction and plain
+text extraction interleave the two side-by-side columns, mixing one
+pillar's content with its neighbour's mid-sentence.
+
+**Decision**
+This content will NOT be mechanically parsed into a CSV. It will be
+cited as narrative content in the paper's background/context section
+(the 5 pillar names and their strategic focus, read directly from the
+source).
+
+**Rationale**
+A parser attempting to un-interleave two-column text carries a real,
+material risk of misattributing one pillar's intervention to another
+- silent fabrication of structure the source doesn't cleanly present.
+Given the deadline, this risk is not worth taking for content that is
+legitimately narrative in nature, not row-level project data like
+CDF/Finance. This is a considered decision after direct inspection of
+the real content, not a skipped step.
+
+## DECISION: 2026-09-15 — Excluded independently-scraped dataset from final submission
+
+**Context**
+A separate CDF dataset (10 rows) was independently committed to main
+past the deadline, citing bare-domain sources (Facebook page, news
+site homepage, council homepage) rather than specific verifiable
+page-level URLs, and carrying a scraped_date (2026-09-07) that
+predates this project's actual start (2026-09-10) - unexplained.
+
+**Decision**
+This file is retained in git history (livingstone_city_council_dataset_team_completed_dataset/)
+as evidence of effort, but is NOT used as the final CDF dataset for
+Kaggle/paper submission. The canonical CDF dataset is
+data/final/cdf_projects_clean.csv + data/final/cdf_news_derived.csv,
+built through the project's established source-register, acquisition-
+audit, and extraction pipeline, where every record traces to a
+specific source_id and verifiable URL.
+
+**Rationale**
+Using unverifiable, non-traceable sources for the final submission
+would directly contradict this project's own documented provenance
+standard (source_register.csv, audit_acquired_sources.py, this
+decision log). Some facts in the excluded file may be genuinely true
+and valuable, but were not verified through our process in the
+available time, so are not included rather than risk an unverifiable claim.
+## DECISION: 2026-09-14 — Standardised "Road Works"/"Roads works" to "Road works"
+
+**Context**
+Phase 5 preprocessing of the CDF projects dataset flagged that `project_type`
+has three spellings for what reads as the same activity: "Road works" (8
+rows), "Road Works" (1 row, SRC-CDF-012 project 3, Dr. Mubitana ward), and
+"Roads works" (1 row, SRC-CDF-012 project 13, Mwalibonena ward). All three
+are present in the source PDF itself, not introduced by extraction.
+
+**Decision**
+Read both affected rows' `project_description` values directly: project 3 is
+"Road grading and gravelling of 5.5km of various roads" and project 13 is
+"Road Grading and Gravelling of l.2km of roads in MA Zone" - both plainly the
+same activity as the 8 rows already labelled "Road works". Both variants are
+merged into the majority spelling "Road works" by
+`src/preprocessing/preprocess_cdf.py`.
+
+**Rationale**
+This is a documented, source-verified merge of a spelling/capitalisation
+inconsistency in the original document, not an inference about unknown data
+- the underlying activity was independently confirmed from each row's own
+description before merging, satisfying the "no unsupported assumptions"
+rule.
+
+## DECISION: 2026-09-14 — Left "Maramba" vs "Maramba (R Section)" ward names unmerged
+
+**Context**
+The CDF projects dataset has `ward="Maramba"` (SRC-CDF-012, from the 2024
+approved-projects PDF) and `ward="Maramba (R Section)"` (SRC-CDF-038, a 2025
+news-derived record). These may be the same ward with an added sub-area
+qualifier, or genuinely different areas - this cannot be determined from the
+two sources alone.
+
+**Decision**
+Both values are left exactly as extracted. No merge, no truncation of
+"(R Section)". Flagged in `docs/team/findings_cdf_extraction.md` for Phase 6
+Integration to resolve (e.g. against an authoritative ward list, if one
+becomes available).
+
+**Rationale**
+Unlike the "Road works" case above, there is no independent evidence in
+either source confirming these refer to the identical area - merging them
+would be a guess, not a verified correction. Per the Phase 6 Integration
+Rule: investigate, do not arbitrarily choose, and document unresolved
+discrepancies rather than silently picking one.
+
+## DECISION: 2026-09-14 — Removed Finance final CSVs mistakenly committed to feature/cdf
+
+**Context**
+Commit `dd010e9` ("Done with Phase 4 - Data Cleaning"), authored as
+`MissTeeChipo <teechipo@gmail.com>`, added the four Finance final datasets
+to this branch. `data/interim/` and `data/final/` are local filesystem
+state, not branch-scoped, so leftover Finance output from earlier work in
+the same working directory was picked up and committed here under the
+Finance identity while `feature/cdf` was checked out.
+
+**Decision**
+The four Finance CSVs are removed from `feature/cdf` in the following
+commit. They remain correctly committed on `feature/finance`.
+
+**Rationale**
+Keeping Member 3's output correctly attributed to Member 3's branch/account
+matters for this assignment's per-member accountability, and the CDF branch
+should only contain CDF-domain deliverables. No data was lost - the
+authoritative copy exists on the correct branch.
+## DECISION: 2026-09-14 — Split finance `period` column into ISO start/end dates
+
+**Context**
+Phase 4 cleaning of `finance_performance` and `finance_capital_projects`
+carried a `period` column verbatim from the source report as free text
+("01-Jan-2025 to 30-Jun-2025"), identical on every row since it is a
+report-level attribute, not a per-row one.
+
+**Decision**
+Phase 5 preprocessing (`src/preprocessing/preprocess_finance.py`) replaces
+`period` with two new columns, `period_start_date` and `period_end_date`,
+both in ISO 8601 (`2025-01-01` / `2025-06-30`). The same script converts
+`start_date`/`end_date` (capital projects) and `outstanding_start_date`/
+`outstanding_end_date` (debt/arrears) from free-text English dates to ISO.
+
+**Rationale**
+This is a schema change (one column becomes two), so per the Phase 5
+requirement that "transformations [be] justified": a free-text sentence is
+not filterable or sortable, while two explicit date columns are, and no
+information is lost since both bounds are preserved exactly. Every date
+conversion in this pass is a pure reformatting of an unambiguous source
+value (verified: "31St March 2025", despite the source's own inconsistent
+capitalisation, converts to `2025-03-31`) - nothing is inferred or
+corrected. The script only reports anomalies (implausible years,
+inconsistent categorical casing) rather than silently fixing them; none
+were found in the finance datasets.
+
+## DECISION: 2026-09-15 — Merged news-derived CDF records into canonical dataset
+
+**Context**
+Two CDF sources existed: the canonical db-unza26-csc4792-livingstone_city_council_cdf_projects.csv
+(25 rows: 22 from SRC-CDF-012 + 3 news records SRC-CDF-038/039/040,
+built by Member 2's audited pipeline) and the Leader's
+cdf_news_derived.csv (12 rows, including the same 3 news records plus
+9 more found later via Member 5's full reads of the March/June
+newsletters).
+
+**Decision**
+Merged the 9 records unique to cdf_news_derived.csv into the
+canonical file, mapping fields into its schema (project_name +
+description + constituency/beneficiaries/location combined into
+project_description, since the canonical schema doesn't have those
+as separate columns). The 3 already-present records were kept in
+Member 2's original form, not overwritten, since both extractions
+independently arrived at consistent facts. Final canonical CDF
+dataset: 34 rows.
+
+**Rationale**
+Two datasets both claiming to be "the CDF dataset" would be a real
+integrity problem for submission. Merging into one canonical file,
+with the merge script itself documenting which rows came from where
+and why duplicates were excluded, satisfies Phase 6 Integration's
+requirement to resolve exactly this kind of overlap transparently.
