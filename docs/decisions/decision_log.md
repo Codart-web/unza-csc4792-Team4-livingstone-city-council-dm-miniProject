@@ -384,3 +384,30 @@ integrity problem for submission. Merging into one canonical file,
 with the merge script itself documenting which rows came from where
 and why duplicates were excluded, satisfies Phase 6 Integration's
 requirement to resolve exactly this kind of overlap transparently.
+
+## DECISION: 2026-09-15 — Phase 7 validation caught missing contractor enrichment
+
+**Context**
+Spot-checking SRC-CDF-038 (Maramba Sewer) against the original March
+newsletter enrichment revealed the canonical CDF dataset's contractor
+field was blank, despite this fact being known and recorded in
+data/interim/cdf_news_derived.csv. The gap: Member 2's extraction
+independently captured SRC-CDF-038/039/040 from the original short
+news posts, but the LATER contractor/beneficiary enrichment (added
+by the Leader after reading the full March newsletter) was never
+propagated into their version when the two datasets were merged.
+
+**Decision**
+Backfilled contractor (SRC-CDF-038, SRC-CDF-040) and beneficiaries
+(folded into project_description) from cdf_news_derived.csv into the
+canonical dataset, touching only these 2 rows. SRC-CDF-039 has no
+enrichment data to backfill (contractor genuinely unknown - the
+source states work was done "under force account", no external
+contractor).
+
+**Rationale**
+This is exactly what Phase 7 Validation exists to catch: a spot-check
+against an original source revealed a real gap between two
+independently-built extractions of the same fact, silently lost
+during Phase 6 Integration. Caught and fixed before submission rather
+than shipped incomplete.
