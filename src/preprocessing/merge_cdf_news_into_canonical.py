@@ -15,7 +15,7 @@ import csv
 from pathlib import Path
 
 CANONICAL = Path("data/final/db-unza26-csc4792-livingstone_city_council_cdf_projects.csv")
-NEWS_DERIVED = Path("data/final/cdf_news_derived.csv")
+NEWS_DERIVED = Path("data/interim/cdf_news_derived.csv")
 
 ALREADY_PRESENT = {"SRC-CDF-038", "SRC-CDF-039", "SRC-CDF-040"}
 

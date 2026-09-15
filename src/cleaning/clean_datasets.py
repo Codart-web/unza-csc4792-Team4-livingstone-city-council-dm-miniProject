@@ -35,6 +35,10 @@ DATASETS: dict[str, tuple[str, tuple[str, ...]]] = {
         "livingstone_city_council_cdf_projects",
         ("project_cost",),
     ),
+    "council_service_standards.csv": (
+        "livingstone_city_council_service_standards",
+        (),
+    ),
     "finance_budget_raw.csv": (
         "livingstone_city_council_finance_budget",
         ("approved_budget", "revised_budget", "estimated_budget"),
