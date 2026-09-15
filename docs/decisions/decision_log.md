@@ -411,3 +411,21 @@ against an original source revealed a real gap between two
 independently-built extractions of the same fact, silently lost
 during Phase 6 Integration. Caught and fixed before submission rather
 than shipped incomplete.
+
+## DECISION: 2026-09-15 — Standardised CDF project status casing
+
+**Context**
+Running the assembled notebook end-to-end surfaced 6 distinct status
+strings representing only 4 real states: "approved", "Completed",
+"in progress", "completed", "In Progress", "Nearly Complete" - a
+filter on any one exact string would silently miss matching rows.
+
+**Decision**
+Standardised to lowercase: approved (22), completed (8), in progress
+(3), nearly complete (1).
+
+**Rationale**
+This is exactly the value of actually executing the notebook rather
+than just building the pipeline in isolation - running real analysis
+code against the final data surfaced a genuine cleaning gap that
+column-by-column inspection had missed.
