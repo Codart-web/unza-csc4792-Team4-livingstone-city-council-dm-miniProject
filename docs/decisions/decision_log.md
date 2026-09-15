@@ -357,3 +357,30 @@ capitalisation, converts to `2025-03-31`) - nothing is inferred or
 corrected. The script only reports anomalies (implausible years,
 inconsistent categorical casing) rather than silently fixing them; none
 were found in the finance datasets.
+
+## DECISION: 2026-09-15 — Merged news-derived CDF records into canonical dataset
+
+**Context**
+Two CDF sources existed: the canonical db-unza26-csc4792-livingstone_city_council_cdf_projects.csv
+(25 rows: 22 from SRC-CDF-012 + 3 news records SRC-CDF-038/039/040,
+built by Member 2's audited pipeline) and the Leader's
+cdf_news_derived.csv (12 rows, including the same 3 news records plus
+9 more found later via Member 5's full reads of the March/June
+newsletters).
+
+**Decision**
+Merged the 9 records unique to cdf_news_derived.csv into the
+canonical file, mapping fields into its schema (project_name +
+description + constituency/beneficiaries/location combined into
+project_description, since the canonical schema doesn't have those
+as separate columns). The 3 already-present records were kept in
+Member 2's original form, not overwritten, since both extractions
+independently arrived at consistent facts. Final canonical CDF
+dataset: 34 rows.
+
+**Rationale**
+Two datasets both claiming to be "the CDF dataset" would be a real
+integrity problem for submission. Merging into one canonical file,
+with the merge script itself documenting which rows came from where
+and why duplicates were excluded, satisfies Phase 6 Integration's
+requirement to resolve exactly this kind of overlap transparently.
