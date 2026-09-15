@@ -331,3 +331,29 @@ Keeping Member 3's output correctly attributed to Member 3's branch/account
 matters for this assignment's per-member accountability, and the CDF branch
 should only contain CDF-domain deliverables. No data was lost - the
 authoritative copy exists on the correct branch.
+## DECISION: 2026-09-14 — Split finance `period` column into ISO start/end dates
+
+**Context**
+Phase 4 cleaning of `finance_performance` and `finance_capital_projects`
+carried a `period` column verbatim from the source report as free text
+("01-Jan-2025 to 30-Jun-2025"), identical on every row since it is a
+report-level attribute, not a per-row one.
+
+**Decision**
+Phase 5 preprocessing (`src/preprocessing/preprocess_finance.py`) replaces
+`period` with two new columns, `period_start_date` and `period_end_date`,
+both in ISO 8601 (`2025-01-01` / `2025-06-30`). The same script converts
+`start_date`/`end_date` (capital projects) and `outstanding_start_date`/
+`outstanding_end_date` (debt/arrears) from free-text English dates to ISO.
+
+**Rationale**
+This is a schema change (one column becomes two), so per the Phase 5
+requirement that "transformations [be] justified": a free-text sentence is
+not filterable or sortable, while two explicit date columns are, and no
+information is lost since both bounds are preserved exactly. Every date
+conversion in this pass is a pure reformatting of an unambiguous source
+value (verified: "31St March 2025", despite the source's own inconsistent
+capitalisation, converts to `2025-03-31`) - nothing is inferred or
+corrected. The script only reports anomalies (implausible years,
+inconsistent categorical casing) rather than silently fixing them; none
+were found in the finance datasets.

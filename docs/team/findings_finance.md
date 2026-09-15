@@ -114,3 +114,31 @@ column of `finance_extraction_report.csv`.
 - **SRC-FINA-001, 002, 012**: verified by direct text inspection to be national
   legislation/policy documents with no Livingstone-specific figures - correctly
   excluded as context-only, confirming the earlier Phase 2 assessment.
+
+## Phase 5 — preprocessing (2026-09-14)
+
+`src/preprocessing/preprocess_finance.py` transforms the Phase 4 output in
+`data/final/` in place, making three justified changes and otherwise leaving
+values untouched:
+
+1. **Dates -> ISO 8601.** `start_date`/`end_date` (capital projects) and
+   `outstanding_start_date`/`outstanding_end_date` (debt/arrears) were
+   free-text English dates in the source ("1st January 2025", and one with
+   inconsistent capitalisation, "31St March 2025"; debt/arrears used
+   "1-Jan-2025"). Each is unambiguous, so this is a notation change, not an
+   inferred value. Verified against source: "31St March 2025" -> `2025-03-31`.
+2. **`period` split into `period_start_date` / `period_end_date`.** The
+   report-level `period` column ("01-Jan-2025 to 30-Jun-2025", identical on
+   every row of `finance_performance` and `finance_capital_projects`) is
+   replaced by two ISO date columns. A sentence isn't filterable/sortable;
+   two explicit bounds are, and no information is lost - both dates are
+   preserved exactly (`2025-01-01` / `2025-06-30`).
+3. **Validation, not correction.** Year columns are checked as 4-digit
+   values in 2020-2035, and `revenue_category` (and other repeated
+   categorical columns) are checked for case/whitespace variants of the same
+   value across the three budget-year documents. None were found - the
+   script would report, not silently merge, any it did find.
+
+The script is idempotent (re-running it against its own output is a no-op,
+confirmed by running it twice) and made no changes to `finance_budget` (no
+date fields there; re-written byte-identical). All 23 tests still pass.
